@@ -1,0 +1,85 @@
+<?php
+
+
+/**
+ * Implementación de hook_schema().
+ */
+
+function acta_schema() {
+	$schema['acta'] = array(
+	    
+			'description' => t("Guarda los datos de las actas."),
+	    
+			'fields' => array(
+			    
+					'nid' => array(
+							'type' => 'int',
+							'unsigned' => TRUE,
+							'not null' => TRUE,
+							'default' => 0,
+							'description' => t("El nid del acta{node}.")
+					),
+			    
+			    'fecha' => array(
+			    		'type' => 'datetime',
+			    		'not null' => TRUE,
+			    		'description' => t('Fecha de la reunión.')
+			     ),
+			    
+			    'tipojunta' => array(
+			    	  'type' => 'int',
+							'unsigned' => TRUE,
+							'not null' => TRUE,
+							'default' => 0,
+							'description' => t("0, o 1")
+			        ),
+			    			     
+			    'motivo' => array(
+			    		'type' => 'varchar',
+			    		'length' => 200,
+			    		'not null' => FALSE,
+			    		'default' => 'presidente',
+			    		'description' => t('Breve descrpción del motivo de la junta.')
+							    ),
+			    
+			    'conclusiones' => array(
+			    		'type' => 'text',
+			    		'size' => 'big',
+			    		'not null' => FALSE,
+			    		'description' => t('El acta.')
+			        ),
+			    
+			    'listaparticipantes' => array(
+			    		'type' => 'text',
+			    		'size' => 'big',
+			    		'not null' => FALSE,
+			    		'description' => t('Una lista con todos los participantes de la reunión.'),),),
+	    
+  'primary key' => array('nid'),
+	    
+ 
+  );
+	
+return $schema;
+
+}
+
+
+/**
+ * Implementación de hook_install().
+ */
+
+function acta_install() {
+  variable_set('pathauto_node_acta_pattern', 'acta/[day]/[nid]');
+	drupal_install_schema('acta');
+	
+}
+
+/**
+ * Implementación de hook_uninstall().
+ */
+
+function acta_uninstall() {
+	drupal_uninstall_schema('acta');
+}
+			    

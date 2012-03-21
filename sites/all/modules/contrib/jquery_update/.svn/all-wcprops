@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/subversion/INTNET/!svn/ver/992/trunk/INTNET/sites/all/modules/contrib/jquery_update
+END
+LICENSE.txt
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/subversion/INTNET/!svn/ver/275/trunk/INTNET/sites/all/modules/contrib/jquery_update/LICENSE.txt
+END
+CHANGELOG.txt
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/subversion/INTNET/!svn/ver/275/trunk/INTNET/sites/all/modules/contrib/jquery_update/CHANGELOG.txt
+END
+jquery_update.module
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/subversion/INTNET/!svn/ver/275/trunk/INTNET/sites/all/modules/contrib/jquery_update/jquery_update.module
+END
+jquery_update.install
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/subversion/INTNET/!svn/ver/275/trunk/INTNET/sites/all/modules/contrib/jquery_update/jquery_update.install
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/subversion/INTNET/!svn/ver/275/trunk/INTNET/sites/all/modules/contrib/jquery_update/README.txt
+END
+jquery_update.info
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/subversion/INTNET/!svn/ver/275/trunk/INTNET/sites/all/modules/contrib/jquery_update/jquery_update.info
+END

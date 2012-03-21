@@ -1,0 +1,24 @@
+<?php
+/**
+* Implementation of hook_block().
+*/
+function bloque_block($op = 'list', $delta = 0) {
+  $block = array();
+  switch ($op) {
+    case 'list':
+      $block[0]['info'] = t('Mi bloque');
+      return $block;
+    case 'view':
+      switch ($delta) {
+        case 0:
+          $block['subject'] = t('Mi bloque1');
+          $block['content'] = "Mi madre ocupa mucho sitio y mi hermana pega chillidos a lo bobo xD";
+          break;
+        case 1:
+          $block['subject'] = t('Mi bloque2');
+          $block['content'] = "Eso mismo";
+          break;
+      }
+      return $block;
+  }
+} // end function fightfi_block

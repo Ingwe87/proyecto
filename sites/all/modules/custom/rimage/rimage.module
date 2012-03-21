@@ -1,0 +1,100 @@
+<?php
+
+function rimage_help($section='') {
+	$output = '';
+	switch ($section) {
+		case "admin/help#rimage":
+			$output = '<p>'.  t("Un bloque de imagenes al azar"). '</p>';
+			break;
+	}
+
+	return $output;
+}
+
+function rimage_block($op = 'list', $delta = 0, $edit = array()) {
+	if ($op == 'list') {
+		$blocks[0] = array(
+				'info' => t('Despliega una imagen al azar')
+				, 'weight' => 0
+				, 'status' => 1
+				, 'cache' => BLOCK_NO_CACHE
+				, 'region' => 'left');
+		return $blocks;
+	}
+	
+	else if ($op == 'configure' && $delta == 0) {
+		$form['title'] = array(
+				'#type' => 'textfield',
+				'#title' => t('Titulo'),
+				'#default_value' => variable_get('rimage_title', ''),
+		);
+		$form['directory'] = array(
+				'#type' => 'textfield',
+				'#title' => t('Directorio'),
+				'#default_value' => variable_get('rimage_directory', ''),
+		);
+		$form['prefix'] = array(
+				'#type' => 'textfield',
+				'#title' => t('Prefijo'),
+				'#default_value' => variable_get('rimage_prefix', ''),
+		);
+		$form['width'] = array(
+				'#type' => 'textfield',
+				'#title' => t('ancho'),
+				'#default_value' => variable_get('rimage_width', ''),
+		);
+		$form['height'] = array(
+				'#type' => 'textfield',
+				'#title' => t('altura'),
+				'#default_value' => variable_get('rimage_height', ''),
+		);
+		return $form;
+	}
+	
+	else if ($op == 'save' && $delta == 0) {
+		variable_set('rimage_directory', $edit['directory']);
+		variable_set('rimage_title', $edit['title']);
+		variable_set('rimage_prefix', $edit['prefix']);
+		variable_set('rimage_width', $edit['width']);
+		variable_set('rimage_height', $edit['height']);
+	}
+	
+	else if ($op == 'view') {
+		switch($delta) {
+			case 0:
+				$block = array(
+				'subject' => variable_get('rimage_title', '')
+				, 'content' => rimage_random_image());
+				break;
+		}
+		return $block;
+	}
+}
+	
+	function rimage_random_image(){
+		if ($handle = opendir(variable_get('rimage_directory', ''))) {
+			$files = array();
+			
+			while (false !== ($file = readdir($handle))) {
+				if ($file != '.' && $file != '..') {
+					$files[] =  $file;
+				  
+				}
+			}
+		
+			closedir($handle);
+			$index = rand(0, count($files) - 1);
+			$file = $files[$index];
+	   
+			$width  = variable_get('rimage_width', '');
+			$height = variable_get('rimage_height', '');
+			return '<img src="'.variable_get('rimage_prefix', '')
+			.'/'.variable_get('rimage_directory', '').'/'
+			.$file.'"'
+			. ($width ? " width=\"$width\"": '') . ( $height ? " height=\"$height\"": '').'>';
+		}
+		return 'El directorio no contiene imagenes. Puede configurarlo en '.l(t('la pagina de configuracion'), 'admin/build/block/configure/rimage/0');
+	}
+	
+	
+	

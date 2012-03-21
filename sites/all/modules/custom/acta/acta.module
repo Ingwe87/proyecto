@@ -1,0 +1,244 @@
+<?php
+
+/**
+ * @file
+ * Provee un tipo de nodo acta.
+ */
+
+
+/**
+ * Implementación de hook_node_info().
+ */
+function acta_node_info() {
+  // Devolvemos un array desde que un módulo puede definir multiples tipos de nodo.
+  // Sólo definimos un tipo de nodo, tipo 'acta'.
+  return array(
+      'acta' => array(          
+         'name' => t('Acta de reunión'),
+         'module' => 'acta',
+         'description' => t('Crear un acta de reunión.'),
+         'has_title' => FALSE,
+         'has_body' => FALSE,
+         'locked' => TRUE
+          ));
+  }
+  
+  /**
+   * Implementación de hook_menu_alter().
+   */
+  
+  function acta_menu_alter(&$callbacks) {
+  	// Si el usuario no tiene permisos de 'administer nodes',
+  	// desabilita el item de menu acta poniendo el acceso callback a FALSE.
+  	if (!user_access('administer nodes')) {
+  		$callbacks['node/add/acta']['access callback'] = FALSE;
+  		// Debemos unset access arguments o Drupal usará user_access()
+  		// por defecto en el access callback.
+  		unset($callbacks['node/add/acta']['access arguments']);
+  	}
+  }
+  
+
+/**
+ * Implementación de hook_perm().
+ */
+  
+function acta_perm() {
+  return array('create acta', 'edit own acta', 'delete own acta');
+}
+
+/**
+ * Implementación de hook_access().
+ */
+
+function acta_access($op, $node, $account) {
+  $is_author = $account->uid == $node->uid;
+  switch ($op) {
+    
+  
+  	case 'create':
+  		// Permitir que los usuarion con rol tengan permisos 'create joke'.
+  		return user_access('create acta', $account);
+  	
+  	case 'update':
+  		// Permitir si el usuario tiene permisos de 'edit own acta' y el usuario es el autor. 
+  		return user_access('edit own acta', $account) && $is_author;
+  		
+  	case 'delete':
+  		// Permitir si el usuario tiene permisos de 'delete own acta' y el usuario es el autor.
+  		return user_access('delete own acta', $account) && $is_author;
+    }
+}
+
+/**
+ * Implementación de hook_form().
+ */
+
+function acta_form(&$node, $form_state) {
+  $type = node_get_types('type', $node);
+  /*asistentes (ahah)*/
+  $form['fecha'] = array(
+      '#title' => t('Fecha'),
+      '#type' => 'date_popup',
+      '#date_format' => 'd-m-Y',
+      '#description' => t('Pone la fecha.'),
+      '#default_value' => array(
+      		'month' => format_date(time(), 'custom', 'n'),
+      		'day' => format_date(time(), 'custom', 'j'),
+      		'year' => format_date(time(), 'custom', 'Y'),
+      ),);
+  
+  $form['tipojunta'] = array(
+  		'#type' => 'select',
+  		'#title' => t('Seleccione un tipo de junta'),
+  		'#default_value' => $node->selectipo,
+      '#required' => TRUE,
+  		'#options' => array(
+  				1 => 'Ordinaria',
+  				2 => 'Extraordinaria',
+  		),
+  		'#description' => t('Por favor elija una opción.'),);  
+
+  $form['motivo'] = array (
+      '#type' => 'textfield',
+      '#title' => t('Una pequeña descripción del motivo de la junta'),
+      '#required' => TRUE,
+      '#default_value' => $node->motivo,
+      '#maxlength' => 255);
+  
+   $form['conclusiones'] = array(
+  		'#type' => 'textarea',
+  		'#title' => t('Definir el acta'),
+  		'#default_value' => $node->cuerpo,
+      '#rows' => 5,
+  		'#required' => TRUE);
+  
+  $form['listaparticipantes'] = array(
+  		'#type' => 'textarea',
+  		'#title' => t('Definir la lista de participantes en la reunión'),
+  		'#default_value' => $node->listaparticipantes,
+  		'#rows' => 5,
+  		'#required' => TRUE,
+      '#description'  => 'Escriba una lista de correos separados por comas.');
+
+  return $form;
+}
+
+/**
+ * Implementación de hook_validate().
+ */
+
+function acta_validate($node) {
+		/*// Fuerza una mínima de 40 palabras en la lista de participantess.
+	if (isset($node->listaparticipantes) && str_word_count($node->listaparticipantes) < 40) {
+		$type = node_get_types('type', $node);
+		form_set_error('listaparticipantes', t('El nodo @type es demasiado corto. Necesita
+		     al menos 40 palabras.', array('@type' => $type->name)));
+	}*/
+  $lista  = trim($listadeparticipantes);
+  $correo = explode(",", $lista);
+  if(preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/',$correo[0])){
+    form_set_error('listaparticipantes',t('El nodo @correo no es correcto', array('@correo' => listaparticipantes)));
+  };
+}
+
+/**
+ * Implementación de hook_insert().
+ */
+
+function acta_insert($node) {
+	db_query("INSERT INTO {acta} (nid, fecha, tipojunta, motivo, conclusiones, listaparticipantes)
+	    VALUES (%d, '%s', %d, '%s', '%s', '%s')",
+			$node->nid, $node->fecha, $node->tipojunta, $node->motivo, $node->conclusiones, $node->listaparticipantes);
+}
+
+/**
+ * Implementación de hook_update().
+ */
+
+function acta_update($node) {
+	if ($node->revision) {
+		// Nueva revisión; es nuevo el nodo.
+		acta_insert($node);
+	}
+	else {
+		db_query("UPDATE {acta} SET (nid, fecha, tipojunta, motivo, conclusiones, listaparticipantes) = 
+		    (%d, '%s', %d, '%s', '%s', '%s') WHERE nid = %d",
+				$node->nid, $node->fecha, $node->tipojunta, $node->motivo, $node->conclusiones, $node->listaparticipantes);
+	}
+}
+
+/**
+ * Implementación de hook_delete().
+ */
+
+function acta_delete(&$node) {
+  // Borra la información que teníamos de este nodo.
+  db_query('DELETE FROM {acta} WHERE nid = %d', $node->nid);
+}
+
+/**
+ * Implementación de hook_help().
+ */
+
+function acta_help($path, $arg) {
+	switch ($path) {
+		case 'admin/help#acta':
+			return '<p>' . t('Permite la creación de un acta de las reuniones de la asociación') . '</p>';
+			break;
+	}
+}
+/**
+ * Implementación de hook_load().
+ * Serviría para que un campo valga para otros módulos pero no lo necesito en principio
+ */
+ function acta_load($node) {
+
+   $acta = db_fetch_object(db_query('SELECT * FROM {acta} a INNER JOIN {node} n ON n.nid = a.nid WHERE vid = %d', $node->vid));
+
+   return $acta;
+}
+
+
+/**
+ * Implementación de hook_view().
+ * Para que se pueda editar el view de un campo.
+ */
+ function acta_view($node, $teaser = FALSE, $page = FALSE) {
+ 
+
+ $node = node_prepare($node, $teaser);
+ $node->content['view'] = array(
+   '#value' => theme('acta_theme', $node),
+   '#weight' => 1,
+ );
+
+ return $node;
+ }
+ 
+
+/**
+ * Implementation of hook_theme()
+ */
+function acta_theme() {
+  return array(
+      'acta_theme' => array(
+        'arguments' => array('node' => NULL), 
+        'template' => 'includes/acta',
+      ),
+      'acta_listaparticipantes' => array(
+          'arguments' => array(
+              'lista' => NULL,
+           ),
+          'file' => 'includes/theme.inc',
+          ),
+  ); 
+  
+}
+
+
+function template_preprocess_acta_theme($variables) {
+  $node = acta_load($variables['node']);
+ $variables['listaparticipantes'] = theme('acta_listaparticipantes', $node->listaparticipantes); 
+ 
+}

@@ -1,0 +1,6 @@
+; $Id$
+name = Imagenes al azar
+description = "Provee un bloque de imagenes al azar"
+package = Custom
+version = 6.x-1.0
+core = 6.x

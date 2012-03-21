@@ -1,0 +1,105 @@
+<?php
+
+/**
+ *
+ * Implementation of hook_menu().
+ */
+function homepage_menu() {
+  $items = array();
+  $items['home'] = array (
+      'title' => 'home page',
+      'description' => 'HOME PAGE',
+      'page callback' => 'home_page',
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+  );
+  return $items;
+
+}
+
+/**
+ * Funcion callback
+ */
+function home_page(){
+
+  return drupal_get_form("home_page_form");
+  
+}
+
+/**
+ * Formulario pagina de inicio
+ * @param $form_state
+ */
+function home_page_form($form_state = NULL) {
+/*
+  $links = _get_home_page_links();
+  $form['items'] = array(
+    '#type' => 'markup',
+    '#value' => $links,
+  );
+*/
+  drupal_set_title('Página de Inicio');
+  $path = drupal_get_path('module', 'homepage').'/homepage.css';
+  drupal_add_css($path);
+  $form['homepage-blocks'] = array(
+    '#type' => 'fieldset',
+    '#id' => 'homepage-blocks'    
+  );
+  $form['homepage-blocks']['javi'] = array(
+      '#value' => '
+          <div id="block-homepage" class="javi">
+            <a href="/proyect/javi" title="Visita la pagina principal del proyecto de Javier">
+              <h3>Proyecto de Javier</h3>
+            </a>
+          </div>
+      ');
+  $form['homepage-blocks']['jaime'] = array(
+  		'#value' => '
+  		<div id="block-homepage" class="jaime">
+  		<a href="/proyect/jaime" title="Visita la pagina principal del proyecto de Jaime">
+  		<h3>Proyecto de Jaime</h3>
+  		</a>
+  		</div>
+  		');
+  $form['homepage-blocks']['blog'] = array(
+  		'#value' => '
+  		<div id="block-homepage" class="blog">
+  		<a href="/blog" title="Visita la pagina principal del proyecto de Javier">
+  		<h3>Blog del proyecto</h3>
+  		</a>
+  		</div>
+  		');
+  return $form;
+}
+
+/**
+ * Obtenemos el html de los links de la pagina principal
+ * @return string $output
+ */
+function _get_home_page_links() {
+  
+  $links = array();
+  
+  $links['javi'] = array(
+  		'title' => '<h2>Proyecto de Javier</h2>',
+  		'href' => 'proyect/javi',
+  		'html' => TRUE,
+      'attributes' => array('class' => 'javi-homepage'),
+  );
+  $links['jaime'] = array(
+  		'title' => '<h2>Proyecto de Jaime</h2>',
+  		'href' => 'proyect/jaime',
+  		'html' => TRUE,
+      'attributes' => array('class' => 'jaime-homepage'),
+  );
+  $links['blog'] = array(
+  		'title' => '<h2>Blog del proyecto</h2>',
+  		'href' => 'blog',
+  		'html' => TRUE,
+      'attributes' => array('class' => 'blog-homepage'), 
+  );
+  
+  $output = theme_links($links, array('id' => 'homepage_links'));
+
+  return $output;
+}

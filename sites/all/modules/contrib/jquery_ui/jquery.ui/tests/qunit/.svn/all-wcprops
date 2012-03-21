@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/subversion/INTNET/!svn/ver/25/trunk/INTNET/sites/all/modules/contrib/jquery_ui/jquery.ui/tests/qunit
+END
+testsuite.css
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/subversion/INTNET/!svn/ver/25/trunk/INTNET/sites/all/modules/contrib/jquery_ui/jquery.ui/tests/qunit/testsuite.css
+END
+testrunner.js
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/subversion/INTNET/!svn/ver/25/trunk/INTNET/sites/all/modules/contrib/jquery_ui/jquery.ui/tests/qunit/testrunner.js
+END

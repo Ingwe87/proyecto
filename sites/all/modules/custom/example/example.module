@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * Implementación de hook_menu().
+ */
+function example_menu() {
+  $items['menu_example'] = array (
+      'title' => 'Ejemplo de una vez',
+      'description' => 'Prueba de Ejemplo',
+      'page callback' => 'example_callback', //"_" para aquellas que son privadas
+      'access callback' => TRUE,
+      //'type' => MENU_CALLBACK, no aparecerá en el menú
+      'type' => MENU_NORMAL_ITEM, // apareceŕa en el menú
+  );
+  $items['menu_mas'] = array (
+      'title' => 'Ejemplo con formulario',
+      'description' => 'Prueba de Ejemplo',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('example_form'),
+      'access callback' => TRUE,
+      'type' => MENU_NORMAL_ITEM,
+      'file' => 'example.pages.inc',
+  );
+  return $items;
+}

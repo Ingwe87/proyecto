@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+
+h2.homepage{text-indent: -9999em;}
+#home-page-form fieldset{border:none}
+#home-page-form #block-homepage{float: left;text-align: center;width: 30%;}
+
+#home-page-form #block-homepage.javi h3{background: url("images/javi-home.png") no-repeat scroll left center transparent;height: 70px;padding-left: 64px; padding-top: 20px;}
+#home-page-form #block-homepage.jaime h3{background: url("images/jaime-home.png") no-repeat scroll left center transparent;height: 70px;padding-left: 64px; padding-top: 20px;}
+#home-page-form #block-homepage.blog h3{background: url("images/blog-home.png") no-repeat scroll left center transparent;height: 70px;padding-left: 64px; padding-top: 20px;}

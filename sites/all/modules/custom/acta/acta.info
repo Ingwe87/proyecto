@@ -1,0 +1,6 @@
+; $Id$
+name = Acta reunión
+description = "Permite la creación de un acta de una reunión."
+package = Custom
+version = 6.x-1.0
+core = 6.x
